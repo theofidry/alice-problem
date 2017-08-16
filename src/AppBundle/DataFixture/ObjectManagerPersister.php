@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace AppBundle\Util\DataFixture;
+namespace AppBundle\DataFixture;
 
 
+use AppBundle\Entity\Detail;
 use Doctrine\Common\Persistence\ObjectManager;
 use Fidry\AliceDataFixtures\Persistence\PersisterInterface;
 use Nelmio\Alice\IsAServiceTrait;
@@ -39,7 +40,10 @@ use Nelmio\Alice\IsAServiceTrait;
      */
     public function persist($object)
     {
-        var_dump('----perSISI-------');
+        if ($object instanceof Detail) {
+            return;
+        }
+
         if (isset($this->persistableClasses[get_class($object)])) {
             $this->objectManager->persist($object);
         }
@@ -50,9 +54,7 @@ use Nelmio\Alice\IsAServiceTrait;
      */
     public function flush()
     {
-        var_dump('----FLUSH_-------');
         $this->objectManager->flush();
-        $this->objectManager->clear();
     }
 
     /**

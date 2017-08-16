@@ -34,15 +34,30 @@ services:
     #     arguments:
     #         $someArgument: 'some_value'
 
-    fidry_alice_data_fixtures.doctrine.persister_loader:
-        class: AppBundle\Util\DataFixture\PersisterLoader
+    # Declare custom persister
+    AppBundle\DataFixture\ObjectManagerPersister:
         arguments:
-          - "@fidry_alice_data_fixtures.loader.multipass_file"
-          - "@fidry_alice_data_fixtures.persistence.persister.doctrine.object_manager_persister"
+            - '@doctrine.orm.entity_manager'
 
+    # Override the persister used by FidryAliceDataFixtures
+    fidry_alice_data_fixtures.persistence.persister.doctrine.object_manager_persister: '@AppBundle\DataFixture\ObjectManagerPersister'
 
-    fidry_alice_data_fixtures.persistence.persister.doctrine.object_manager_persister:
-        class: AppBundle\Util\DataFixture\ObjectManagerPersister
+    # Declare custom loader
+    AppBundle\DataFixture\DetailProcessorLoader:
         arguments:
-          - "@doctrine.orm.entity_manager"
+            - '@fidry_alice_data_fixtures.doctrine.persister_loader'
+            - '@doctrine.orm.entity_manager'
 
+    # Override the default loader used by HautelookAliceBundle
+    hautelook_alice.data_fixtures.loader: '@AppBundle\DataFixture\DetailProcessorLoader'
+
+    # Custom DoctrineOrmLoader
+    AppBundle\DataFixture\DoctrineOrmLoader:
+        arguments:
+            - '@hautelook_alice.resolver.bundle'
+            - '@hautelook_alice.locator'
+            - '@hautelook_alice.data_fixtures.loader'
+            - '@logger'
+
+    # Override HautelookAliceBundle loader
+    hautelook_alice.loader: '@AppBundle\DataFixture\DoctrineOrmLoader'

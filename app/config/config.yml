@@ -70,4 +70,4 @@ swiftmailer:
 
 
 hautelook_alice:
-    fixtures_path: 'DataFixtures'
+    fixtures_path: 'fixtures'
